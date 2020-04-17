@@ -12,7 +12,7 @@ max=3600
 # 取得上次成功上报的时间戳
 config="/tmp/wechat_up.log"
 # 强制执行一次
-if [[ "$#" = "0" ]] || [[ "$1" = "start" ]] ; then
+if [[ "$#" = "0" ]] && [[ "$1" = "start" ]] ; then
 echo 0 > $config
 fi
 
