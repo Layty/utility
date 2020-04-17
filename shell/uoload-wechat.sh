@@ -1,19 +1,19 @@
 #!/bin/bash
-# ¼ÓÈë¿ª»ú½Å±¾Ôò¿ÉÒÔÖ÷¶¯ÉÏ±¨Ip mac
-# ²ÎÊıÎªstart ±íÊ¾Ç¿ÖÆÖ´ĞĞÒ»´Î
-# ÏŞÖÆÃ¿ÌìÆô¶¯µÄ´ÎÊı, 0 Ö´ĞĞÒ»´Î 1 µÈ´ıÖ´ĞĞÊ±¼ä 2 ÎŞ·¨Íê³ÉÈÎÎñ,ping²»Í¨
+# å‚æ•°ä¸ºstart è¡¨ç¤ºå¼ºåˆ¶æ‰§è¡Œä¸€æ¬¡
+# é™åˆ¶æ¯å¤©å¯åŠ¨çš„æ¬¡æ•°, 0 æ‰§è¡Œä¸€æ¬¡ 1 ç­‰å¾…æ‰§è¡Œæ—¶é—´ 2 æ— æ³•å®Œæˆä»»åŠ¡,pingä¸é€š
 
-# Æô¶¯¼ä¸ôÎª3600s,Ò²¾ÍÊÇ1h
+# å¯åŠ¨é—´éš”ä¸º3600s,ä¹Ÿå°±æ˜¯1h
 max=3600    
 
 
 
 
-# È¡µÃÉÏ´Î³É¹¦ÉÏ±¨µÄÊ±¼ä´Á
+
+# å–å¾—ä¸Šæ¬¡æˆåŠŸä¸ŠæŠ¥çš„æ—¶é—´æˆ³
 config="/tmp/wechat_up.log"
-# Ç¿ÖÆÖ´ĞĞÒ»´Î
-if [[ $# > 0 ]] && [[ $1 = "start" ]]; then 
-    rm $config
+# å¼ºåˆ¶æ‰§è¡Œä¸€æ¬¡
+if [[ "$#" = "0" ]] || [[ "$1" = "start" ]] ; then
+echo 0 > $config
 fi
 
 
@@ -28,18 +28,18 @@ else
 fi
 echo "last="$last
 
-# »ñµÃµ±Ç°Ê±¼ä´Á
+# è·å¾—å½“å‰æ—¶é—´æˆ³
 now=$(date +%s)
 echo "now ="$now
 
-# È¡µÃÊ±¼ä²î
+# å–å¾—æ—¶é—´å·®
 let abs="$now"-"$last"
 if [ "$abs" -lt 0 ]; then
   let abs=0-$abs;
 fi
 echo "diff="$abs
 
-#Ò»Ğ¡Ê±Ö»ÄÜÔËĞĞÒ»´Î,Èç¹ûÉÏ´ÎÊÇÊ§°ÜµÄ,¿ÉÒÔÂíÉÏÔÙÀ´
+#ä¸€å°æ—¶åªèƒ½è¿è¡Œä¸€æ¬¡,å¦‚æœä¸Šæ¬¡æ˜¯å¤±è´¥çš„,å¯ä»¥é©¬ä¸Šå†æ¥
 if [ $abs -lt $max ]; then
   echo "we have upload !!!"
   exit 2
@@ -53,9 +53,13 @@ case $(uname -m) in
     *)      title="imx:"$(cat /sys/fsl_otp/HW_OCOTP_CFG0)$(cat /sys/fsl_otp/HW_OCOTP_CFG1)"--"$(date +%Y-%m-%d-%H:%M) ;;
 esac
 
+i=0
+loop=60
+sleepTime=10 # 10*10*6=10 min é€€å‡º
+while [ $i -le $loop ]; do
 
-sleepTime=10 # 10*10*6=10 min ÍË³ö
-for((i=1;i<=((10*6));i++)); do 
+    let i++
+
     remote_ip="www.baidu.com"
     ping -c 1  -w 2  $remote_ip
     if [ $? -eq 0 ] ;then
@@ -64,9 +68,9 @@ for((i=1;i<=((10*6));i++)); do
             txt="$(ifconfig -a | grep -i -E "eth|mask")"
             txt="\`\`\`\n"+$txt+"\n\`\`\`";
             txt=`echo -e "${txt}"`
-            #curl "http://sc.ftqq.com/SCU48595Ted99b0efd37887ebebf02013bb9fcd4b5caf442bd10eb9.send" -X POST -d "text=$title&desp=$txt"
+            #curl "http://sc.ftqq.com/SCU48595Ted99b0efd37887ebebf02013bb9fcd4b5caf442bd10eb999.send" -X POST -d "text=$title&desp=$txt"
             # ./curl_wechat.exe  "$title"  "$(ifconfig -a | grep -i -E "eth|mask")
-            # ¼ÇÂ¼³É¹¦Öµ
+            # è®°å½•æˆåŠŸå€¼
             echonow=$(date +%s)
             echo  $echonow > $config
             exit 0
